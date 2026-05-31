@@ -13,7 +13,7 @@
  *   bharatmcp help               Show this help
  */
 
-const API_BASE = 'https://bharatmcp.in/api/v1'
+const API_BASE = 'https://bharatmcp-cyan.vercel.app/api/v1'
 const VERSION = '1.0.0'
 
 // ─── Colors (no dependencies) ────────────────────────────────────────────────
