@@ -51,6 +51,25 @@ export default function BrowseResults() {
   const filteredProjects = useMemo(() => {
     let projects = [...ALL_PROJECTS]
 
+    // Filter by URL params (from sidebar)
+    const urlType = searchParams.get('type') || ''
+    const urlCategory = searchParams.get('category') || ''
+    const urlVerified = searchParams.get('verified') || ''
+    const urlCountry = searchParams.get('country') || ''
+
+    if (urlType) {
+      projects = projects.filter(p => p.type === urlType)
+    }
+    if (urlCategory) {
+      projects = projects.filter(p => p.category.slug === urlCategory)
+    }
+    if (urlVerified) {
+      projects = projects.filter(p => p.verification_tier === urlVerified)
+    }
+    if (urlCountry && urlCountry !== 'all') {
+      projects = projects.filter(p => p.country === urlCountry)
+    }
+
     // Filter by search query
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
@@ -84,7 +103,7 @@ export default function BrowseResults() {
     }
 
     return projects
-  }, [activeType, sortBy, searchQuery])
+  }, [activeType, sortBy, searchQuery, searchParams])
 
   const paginatedProjects = filteredProjects.slice(0, page * perPage)
   const hasMore = paginatedProjects.length < filteredProjects.length

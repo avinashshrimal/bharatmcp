@@ -38,7 +38,9 @@ export default function BrowsePage() {
           <div className="flex gap-0 min-[900px]:gap-6">
             {/* Filter Sidebar — hidden below 900px */}
             <div className="hidden min-[900px]:block">
-              <FilterSidebar />
+              <Suspense fallback={<div className="w-[240px]" />}>
+                <FilterSidebar />
+              </Suspense>
             </div>
 
             {/* Results */}

@@ -1,33 +1,39 @@
 'use client'
 
-import { useState } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { COMPUTED_CATEGORIES } from '@/lib/all-projects'
 
-const types = ['MCP', 'Skill', 'Agent', 'Workflow']
-const verificationOptions = ['Verified', 'Community', 'Listed']
-const countryOptions = ['All', 'India', 'Global']
+const types = ['mcp', 'skill', 'agent', 'workflow']
+const typeLabels: Record<string, string> = { mcp: 'MCP', skill: 'Skill', agent: 'Agent', workflow: 'Workflow' }
+const verificationOptions = ['bharatmcp_verified', 'community_verified', 'listed']
+const verificationLabels: Record<string, string> = { bharatmcp_verified: 'Verified', community_verified: 'Community', listed: 'Listed' }
+const countryOptions = ['all', 'india', 'global']
+const countryLabels: Record<string, string> = { all: 'All', india: 'India', global: 'Global' }
 
 export default function FilterSidebar({ className = '' }: { className?: string }) {
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([])
-  const [selectedVerification, setSelectedVerification] = useState<string[]>([])
-  const [selectedCountry, setSelectedCountry] = useState('All')
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
-  const toggleType = (type: string) => {
-    setSelectedTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
-    )
-  }
+  const currentType = searchParams.get('type') || ''
+  const currentCategory = searchParams.get('category') || ''
+  const currentVerification = searchParams.get('verified') || ''
+  const currentCountry = searchParams.get('country') || 'all'
 
-  const toggleVerification = (v: string) => {
-    setSelectedVerification((prev) =>
-      prev.includes(v) ? prev.filter((t) => t !== v) : [...prev, v]
-    )
+  const updateParam = (key: string, value: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (value && value !== 'all') {
+      params.set(key, value)
+    } else {
+      params.delete(key)
+    }
+    // Keep existing q param
+    router.replace(`/browse?${params.toString()}`, { scroll: false })
   }
 
   return (
     <aside
-      className={`w-[240px] shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] p-5 ${className}`}
-      style={{ minHeight: 'calc(100vh - 64px)' }}
+      className={`w-[240px] shrink-0 border-r border-[var(--color-border)] bg-[var(--color-surface)] p-5 rounded-lg ${className}`}
+      style={{ minHeight: 'calc(100vh - 200px)' }}
     >
       {/* Type */}
       <div className="mb-6">
@@ -39,25 +45,39 @@ export default function FilterSidebar({ className = '' }: { className?: string }
               className="flex items-center gap-2 cursor-pointer text-[13px] font-body text-[var(--color-text-secondary)] hover:text-white transition-colors"
             >
               <input
-                type="checkbox"
-                checked={selectedTypes.includes(type)}
-                onChange={() => toggleType(type)}
-                className="w-3.5 h-3.5 rounded accent-[#FF6B00]"
+                type="radio"
+                name="type"
+                checked={currentType === type}
+                onChange={() => updateParam('type', currentType === type ? '' : type)}
+                className="w-3.5 h-3.5 accent-[#FF6B00]"
               />
-              {type}
+              {typeLabels[type]}
             </label>
           ))}
+          {currentType && (
+            <button
+              onClick={() => updateParam('type', '')}
+              className="text-[11px] text-[#FF6B00] hover:underline cursor-pointer text-left mt-1"
+            >
+              Clear
+            </button>
+          )}
         </div>
       </div>
 
       {/* Category */}
       <div className="mb-6">
         <h4 className="font-heading font-bold text-[14px] text-white mb-3">Category</h4>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5 max-h-[200px] overflow-y-auto">
           {COMPUTED_CATEGORIES.filter(cat => cat.project_count > 0).map((cat) => (
             <button
               key={cat.slug}
-              className="flex items-center justify-between text-[13px] font-body text-[var(--color-text-secondary)] hover:text-white transition-colors cursor-pointer text-left"
+              onClick={() => updateParam('category', currentCategory === cat.slug ? '' : cat.slug)}
+              className={`flex items-center justify-between text-[13px] font-body transition-colors cursor-pointer text-left px-2 py-1 rounded ${
+                currentCategory === cat.slug
+                  ? 'text-[#FF6B00] bg-[#FF6B00]/10'
+                  : 'text-[var(--color-text-secondary)] hover:text-white'
+              }`}
             >
               <span>{cat.name}</span>
               <span className="text-[11px] text-[var(--color-text-muted)]">{cat.project_count}</span>
@@ -76,14 +96,23 @@ export default function FilterSidebar({ className = '' }: { className?: string }
               className="flex items-center gap-2 cursor-pointer text-[13px] font-body text-[var(--color-text-secondary)] hover:text-white transition-colors"
             >
               <input
-                type="checkbox"
-                checked={selectedVerification.includes(v)}
-                onChange={() => toggleVerification(v)}
-                className="w-3.5 h-3.5 rounded accent-[#FF6B00]"
+                type="radio"
+                name="verification"
+                checked={currentVerification === v}
+                onChange={() => updateParam('verified', currentVerification === v ? '' : v)}
+                className="w-3.5 h-3.5 accent-[#FF6B00]"
               />
-              {v}
+              {verificationLabels[v]}
             </label>
           ))}
+          {currentVerification && (
+            <button
+              onClick={() => updateParam('verified', '')}
+              className="text-[11px] text-[#FF6B00] hover:underline cursor-pointer text-left mt-1"
+            >
+              Clear
+            </button>
+          )}
         </div>
       </div>
 
@@ -99,11 +128,11 @@ export default function FilterSidebar({ className = '' }: { className?: string }
               <input
                 type="radio"
                 name="country"
-                checked={selectedCountry === c}
-                onChange={() => setSelectedCountry(c)}
+                checked={currentCountry === c}
+                onChange={() => updateParam('country', c)}
                 className="w-3.5 h-3.5 accent-[#FF6B00]"
               />
-              {c}
+              {countryLabels[c]}
             </label>
           ))}
         </div>
