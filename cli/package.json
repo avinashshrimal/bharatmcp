@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "India's MCP registry — search, discover, and install MCP servers from your terminal",
   "bin": {
-    "bharatmcp": "./bin/bharatmcp.mjs"
+    "bharatmcp": "bin/bharatmcp.mjs"
   },
+  "files": ["bin"],
   "type": "module",
   "keywords": ["mcp", "model-context-protocol", "india", "ai", "registry", "cli"],
   "author": "BharatMCP",
