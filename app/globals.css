@@ -1,26 +1,198 @@
 @import "tailwindcss";
 
+/* ===== Design System Tokens ===== */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand Colors */
+  --color-saffron: #FF6B00;
+  --color-saffron-light: #FF8520;
+  --color-saffron-dark: #E05E00;
+  --color-green: #128807;
+  --color-green-light: #34A028;
+  --color-green-dark: #0F7306;
+
+  /* Neutral / Surface Colors */
+  --color-navy: #0A0F1E;
+  --color-surface: #141C2E;
+  --color-surface-light: #1E2A42;
+  --color-surface-lighter: #283656;
+  --color-border: #2A3654;
+  --color-border-light: #3D4F6F;
+
+  /* Text Colors */
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+
+  /* Accent Colors */
+  --color-accent-purple: #8B5CF6;
+  --color-accent-blue: #3B82F6;
+  --color-accent-cyan: #06B6D4;
+
+  /* Semantic Colors */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+
+  /* Typography */
+  --font-heading: "Figtree", sans-serif;
+  --font-body: "Figtree", sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  --shadow-glow-saffron: 0 0 20px rgba(255, 107, 0, 0.3);
+  --shadow-glow-green: 0 0 20px rgba(18, 136, 7, 0.3);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Background */
+  --background: #0A0F1E;
+  --foreground: #FFFFFF;
 }
 
+/* Tailwind v4 Theme Configuration */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Brand */
+  --color-saffron-50: #FFF3E6;
+  --color-saffron-100: #FFE0BF;
+  --color-saffron-200: #FFC180;
+  --color-saffron-300: #FFA340;
+  --color-saffron-400: #FF8520;
+  --color-saffron-500: #FF6B00;
+  --color-saffron-600: #E05E00;
+  --color-saffron-700: #B84D00;
+  --color-saffron-800: #8F3C00;
+  --color-saffron-900: #662B00;
+
+  --color-green-50: #E8F5E6;
+  --color-green-100: #C6E6C2;
+  --color-green-200: #8FCC85;
+  --color-green-300: #57B34A;
+  --color-green-400: #349D28;
+  --color-green-500: #128807;
+  --color-green-600: #0F7306;
+  --color-green-700: #0C5E05;
+  --color-green-800: #094904;
+  --color-green-900: #063403;
+
+  --color-navy-50: #E8EAF0;
+  --color-navy-100: #C5CAD9;
+  --color-navy-200: #8B94B3;
+  --color-navy-300: #515F8D;
+  --color-navy-400: #2D3A66;
+  --color-navy-500: #0A0F1E;
+  --color-navy-600: #080C18;
+  --color-navy-700: #060912;
+  --color-navy-800: #04060C;
+  --color-navy-900: #020306;
+
+  --color-surface-DEFAULT: #141C2E;
+  --color-surface-light: #1E2A42;
+  --color-surface-lighter: #283656;
+
+  --color-accent-purple: #8B5CF6;
+  --color-accent-blue: #3B82F6;
+  --color-accent-cyan: #06B6D4;
+
+  /* Fonts */
+  --font-heading: var(--font-figtree), sans-serif;
+  --font-body: var(--font-figtree), sans-serif;
+  --font-sans: var(--font-figtree), sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* ===== Base Styles ===== */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-figtree), system-ui, sans-serif;
+  font-weight: 700;
+}
+
+/* ===== Scrollbar Styles ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-navy);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-lighter);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-light);
+}
+
+/* ===== Selection ===== */
+::selection {
+  background: rgba(255, 107, 0, 0.3);
+  color: var(--color-text-primary);
+}
+
+
+/* Dot grid pattern for hero sections */
+.dot-grid-bg {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+  background-size: 40px 40px;
+}
+
+/* ===== Custom Animations ===== */
+@keyframes pulse-dot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s infinite;
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+.animate-blink {
+  animation: blink 1s step-end infinite;
 }

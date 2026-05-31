@@ -1,0 +1,215 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  username      String    @unique
+  name          String?
+  avatarUrl     String?
+  bio           String?
+  githubId      String?   @unique
+  role          Role      @default(USER)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects      Project[]
+  reviews       Review[]
+  stars         Star[]
+  followers     Follow[]  @relation("following")
+  following     Follow[]  @relation("followers")
+  bookmarks     Bookmark[]
+
+  @@map("users")
+}
+
+model Project {
+  id              String    @id @default(cuid())
+  name            String
+  slug            String    @unique
+  description     String?
+  longDescription String?
+  githubUrl       String?
+  websiteUrl      String?
+  installCommand  String?
+  logoUrl         String?
+  bannerUrl       String?
+  version         String?
+  license         String?
+  type            ProjectType @default(MCP)
+  country         String?
+  verificationTier VerificationTier @default(LISTED)
+  downloadCount   Int       @default(0)
+  installCount    Int       @default(0)
+  starCount       Int       @default(0)
+  rating          Float     @default(0)
+  reviewCount     Int       @default(0)
+  isVerified      Boolean   @default(false)
+  isFeatured      Boolean   @default(false)
+  status          ProjectStatus @default(PENDING)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  authorId        String
+  author          User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId      String?
+  category        Category? @relation(fields: [categoryId], references: [id])
+
+  tags            TagsOnProjects[]
+  reviews         Review[]
+  stars           Star[]
+  bookmarks       Bookmark[]
+  installEvents   InstallEvent[]
+  downloadEvents  DownloadEvent[]
+
+  @@map("projects")
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String    @unique
+  slug        String    @unique
+  description String?
+  iconUrl     String?
+  color       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  projects    Project[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String    @id @default(cuid())
+  name      String    @unique
+  slug      String    @unique
+  createdAt DateTime  @default(now())
+
+  projects  TagsOnProjects[]
+
+  @@map("tags")
+}
+
+model TagsOnProjects {
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tagId     String
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+  @@map("tags_on_projects")
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  title     String?
+  content   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("reviews")
+}
+
+model Star {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("stars")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+
+  followerId  String
+  follower    User    @relation("followers", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User    @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+  @@map("follows")
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@map("bookmarks")
+}
+
+model InstallEvent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  ipHash    String?
+  userAgent String?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("install_events")
+}
+
+model DownloadEvent {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  ipHash    String?
+  userAgent String?
+  version   String?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("download_events")
+}
+
+enum Role {
+  USER
+  CREATOR
+  ADMIN
+}
+
+enum ProjectStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ARCHIVED
+}
+
+enum ProjectType {
+  MCP
+  SKILL
+  AGENT
+  WORKFLOW
+  TEMPLATE
+}
+
+enum VerificationTier {
+  BHARATMCP_VERIFIED
+  COMMUNITY_VERIFIED
+  LISTED
+}

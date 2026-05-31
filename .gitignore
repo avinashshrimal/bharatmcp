@@ -30,12 +30,34 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files
 .env*
 
 # vercel
 .vercel
 
+# scraped data (regeneratable with npm run scrape)
+/data
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE
+.vscode/
+.idea/
+
+# Reference files (not part of the app)
+/website/
+index.html
+
+# Old planning docs (not needed in production)
+AGENT_INSTRUCTIONS.md
+AGENTS.md
+CLAUDE.md
+design-system.md
+requirements.md
+tasks.md
+
+# Kiro steering (local dev context only)
+.kiro/
